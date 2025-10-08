@@ -1,0 +1,20 @@
+<template th:fragment="geminiPrompt" id="geminiPopoverContent">
+    <div class="mb-2">
+        <textarea class="form-control" id="geminiPrompt" rows="4"
+                  placeholder="Ví dụ: Viết một đoạn văn ngắn về lợi ích của việc đọc sách..."></textarea>
+    </div>
+    <button type="button" id="generateContentBtn" class="btn btn-success btn-sm">
+        <span id="generateBtnText">Generate</span>
+        <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none" role="status"
+              aria-hidden="true"></span>
+    </button>
+    <div class="mt-3">
+        <label class="form-label small">Generated Content:</label>
+        <div id="geminiResult" class="border p-2"
+             style="min-height: 100px; max-height: 200px; overflow-y: auto; background-color: #f8f9fa; font-size: 0.9em;">
+        </div>
+    </div>
+    <div class="text-end mt-2">
+        <button type="button" id="insertToEditorBtn" class="btn btn-primary btn-sm">Insert</button>
+    </div>
+</template>

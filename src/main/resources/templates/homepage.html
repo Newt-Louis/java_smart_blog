@@ -15,26 +15,6 @@
     <script src="/fontawesome-free-7.0.1-web/js/all.min.js"></script>
     <script src="/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/quill-image-resize.js"></script>
-    <!-- Quill Image Resize CSS (nếu cần) -->
-    <style>
-        /* Style cho container để tránh ảnh tràn */
-        .ql-editor img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* Style cho card hiển thị bài viết */
-        .blog-content {
-            max-width: 100%;
-            overflow: hidden;
-        }
-
-        .blog-content img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-        }
-    </style>
 </head>
 <body>
 <div class="header_layout" style="height: 2vw"></div>
@@ -188,7 +168,9 @@
                     <textarea id="hiddenContent_createPost" name="content" hidden></textarea>
                     <div class="d-flex">
                         <button type="submit" class="btn btn-primary mt-3 me-2">Save content</button>
-                        <button type="button" class="btn btn-primary mt-3">Use Gemini</button>
+                        <button id="openGeminiPopoverBtn" type="button" class="btn btn-primary mt-3">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Use Gemini
+                        </button>
                     </div>
                 </form>
             </div>
@@ -203,8 +185,8 @@
         </div>
     </div>
 </div>
+<div th:replace="~{/fragments/gemini_prompt :: geminiPrompt}"></div>
 <script src="/js/login-form.js"></script>
-<script src="/js/gemini-box.js"></script>
 <script>
     const quillTitleCreatePost = document.querySelector(`#quill_title_create_post`);
     const savePostContentFormCreate = document.querySelector(`#savePostContentFormCreate`);
@@ -319,5 +301,6 @@
         quillCreatePost.setContents([]);
     });
 </script>
+<script src="/js/gemini-box.js"></script>
 </body>
 </html>

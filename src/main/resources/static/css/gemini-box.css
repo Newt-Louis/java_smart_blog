@@ -1,0 +1,9 @@
+.gemini-popover {
+    min-width: 400px; /* Tăng chiều rộng của popover */
+    max-width: 500px;
+}
+
+.gemini-popover .popover-header {
+    background-color: var(--bs-primary); /* Sử dụng màu primary mặc định của Bootstrap */
+    color: white; /* Đổi màu chữ và icon thành màu trắng */
+}
