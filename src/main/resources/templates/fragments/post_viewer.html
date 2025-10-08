@@ -70,7 +70,15 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button id="btn_update_post" type="button" class="btn btn-primary">Save changes</button>
-                    <button type="button" class="btn btn-primary">Use Gemini</button>
+                    <button
+                            data-bs-toggle="popover"
+                            id="geminiBtnUpdate"
+                            type="button"
+                            class="btn btn-primary"
+                            data-target-editor="#quill_editor_update_post"
+                    >
+                        Use Gemini
+                    </button>
                 </div>
             </div>
         </div>

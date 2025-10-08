@@ -1,35 +1,71 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const popoverTriggerBtn = document.getElementById('openGeminiPopoverBtn');
-    const popoverHtmlContent = document.getElementById('geminiPopoverContent');
+    let activeQuillInstance = null;
+    let activePopoverTrigger = null;
+    const popoverTemplate = document.getElementById('geminiPopoverTemplate');
+    if (!popoverTemplate) {
+        console.error('Gemini Popover template not found!');
+        return;
+    }
+
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
 
     // 1. Khởi tạo Popover
-    const popover = new bootstrap.Popover(popoverTriggerBtn, {
-        container: 'body',      // Quan trọng: giúp popover không bị cắt xén
-        html: true,             // Quan trọng: cho phép nội dung là HTML
-        placement: 'top',       // Vị trí của popover (top, bottom, left, right)
-        title: '<i class="fa-solid fa-wand-magic-sparkles"></i> Generate Content',
-        customClass: 'gemini-popover', // Class CSS tùy chỉnh
-        // Lấy nội dung từ div ẩn
-        content: function () {
-            return popoverHtmlContent.content.cloneNode(true);
-        }
+    const popovers = [...popoverTriggerList].map(popoverTriggerEl => {
+        const popover = new bootstrap.Popover(popoverTriggerEl, {
+            container: 'body',
+            html: true,
+            placement: 'top',
+            title: '<i class="fa-solid fa-wand-magic-sparkles"></i> Generate Content',
+            customClass: 'gemini-popover',
+            content: function () {
+                // Luôn tạo bản sao mới từ template
+                return popoverTemplate.content.cloneNode(true);
+            }
+        });
+        popoverTriggerEl.addEventListener('show.bs.popover', function (event) {
+            bootstrap.Popover.getInstance(activePopoverTrigger)?.hide();
+            activePopoverTrigger = event.target;
+            const targetEditorSelector = event.target.dataset.targetEditor;
+            const editorElement = document.querySelector(targetEditorSelector);
+
+            if (editorElement) {
+                // Dùng API của Quill để tìm instance đang gắn với DOM element đó
+                activeQuillInstance = Quill.find(editorElement);
+            } else {
+                console.error('Target Quill editor not found:', targetEditorSelector);
+                activeQuillInstance = null;
+            }
+        });
+
+        // Khi popover ĐÃ ĐƯỢC ẨN
+        popoverTriggerEl.addEventListener('hidden.bs.popover', function () {
+            // Dọn dẹp biến trạng thái
+            activePopoverTrigger = null;
+            activeQuillInstance = null;
+        });
+
+        return popover;
     });
 
     // 2. Lắng nghe sự kiện click trên toàn bộ trang (Event Delegation)
     document.addEventListener('click', function (event) {
         const target = event.target;
 
-        if (target.closest('#generateContentBtn')) {
-            handleGenerateContentClick(target);
+        // Nếu click bên trong popover
+        const popoverBody = target.closest('.popover-body');
+        if (popoverBody) {
+            if (target.closest('#generateContentBtn')) {
+                handleGenerateContentClick(target);
+            } else if (target.closest('#insertToEditorBtn')) {
+                handleInsertToEditorClick(target);
+            }
             return;
         }
 
-        if (target.closest('#insertToEditorBtn')){
-            handleInsertToEditorClick(target);
-            return;
+        // Nếu click bên ngoài popover và không phải là nút trigger đang active
+        if (activePopoverTrigger && !activePopoverTrigger.contains(target)) {
+            bootstrap.Popover.getInstance(activePopoverTrigger).hide();
         }
-
-        hidePopoverWhenClickOutsideContent(target);
     });
 
     function handleGenerateContentClick(target) {
@@ -73,20 +109,24 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function handleInsertToEditorClick(target) {
+        if (!activeQuillInstance) {
+            console.error('Cannot insert content: No active Quill editor instance found.');
+            alert('Error: Could not find the editor to insert content into.');
+            return;
+        }
         const popoverBody = target.closest('.popover-body');
         const resultDiv = popoverBody.querySelector('#geminiResult');
         const generatedHtml = resultDiv.innerHTML;
 
         if (generatedHtml) {
-            const currentContent = quill.root.innerHTML;
-            quill.root.innerHTML = currentContent + generatedHtml;
-            popover.hide(); // Ẩn popover sau khi chèn
-        }
-    }
+            const currentContent = activeQuillInstance.root.innerHTML;
+            activeQuillInstance.root.innerHTML = currentContent + generatedHtml;
 
-    function hidePopoverWhenClickOutsideContent(target){
-        if (!popoverTriggerBtn.contains(target) && !document.querySelector('.popover')?.contains(target)) {
-            popover.hide();
+            // Tìm và ẩn popover đang mở
+            const popoverInstance = bootstrap.Popover.getInstance(activePopoverTrigger);
+            if (popoverInstance) {
+                popoverInstance.hide();
+            }
         }
     }
 });
