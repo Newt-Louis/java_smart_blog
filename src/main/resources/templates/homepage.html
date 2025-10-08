@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Blog</title>
+    <link rel="stylesheet" href="/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/login-form.css">
+    <link rel="stylesheet" href="/intl-tel-input-25.11.2/css/intl-tel-input.css">
+    <link th:href="@{/webjars/quill/1.3.7/dist/quill.snow.css}" rel="stylesheet">
+    <link rel="stylesheet" href="/fontawesome-free-7.0.1-web/css/all.min.css">
+    <link rel="stylesheet" href="/css/gemini-box.css">
+    <script src="/js/DOMPurify.js"></script>
+    <script th:src="@{/webjars/quill/1.3.7/dist/quill.js}"></script>
+    <script src="/js/event-bus.js"></script>
+    <script src="/fontawesome-free-7.0.1-web/js/all.min.js"></script>
+    <script src="/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/quill-image-resize.js"></script>
+    <!-- Quill Image Resize CSS (nếu cần) -->
+    <style>
+        /* Style cho container để tránh ảnh tràn */
+        .ql-editor img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Style cho card hiển thị bài viết */
+        .blog-content {
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .blog-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="header_layout" style="height: 2vw"></div>
+<div class="container p-2">
+    <div class="row">
+        <div class="col-6" th:classappend="${session.loggedInUser == null} ? '' : 'd-none'">
+            <form th:action="@{/login}" method="post" id="loginForm" class="border rounded p-3 mb-3">
+                <h3 class="text-center">Đăng nhập</h3>
+                <div class="row mb-3">
+                    <label for="inputUsernameLogin" class="col-sm-2 col-form-label">Username</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="login_username" id="inputUsernameLogin">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="inputPasswordLogin" class="col-sm-2 col-form-label">Password</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" name="login_password" id="inputPasswordLogin">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mb-3">Sign in</button>
+                <div class="row mb-3">
+                    <div class="d-flex justify-content-center">
+                        <span class="me-2">Chưa có tài khoản ?</span>
+                        <span class="link-primary text-decoration-underline" id="nowRegister" style="cursor:pointer">Đăng ký ngay</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-6" th:unless="${session.loggedInUser == null}">
+            <div class="d-flex justify-content-end">
+                <form th:action="@{/logout}" method="get" id="logoutForm">
+                    <button type="submit" id="signOut" class="btn btn-primary mb-3">Sign out</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-6 border rounded p-3 mb-3 d-none" id="registerFormBox">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-end">
+                    <button class="btn btn-outline-dark rounded-pill d-flex align-items-center gap-1 px-3 btn-ripple" id="hiddenInteractButton">
+                        <i class="fa-solid fa-xmark"></i><span>Ẩn</span>
+                    </button>
+                </div>
+                <div class="col-12">
+                    <h3 class="text-center">Đăng ký</h3>
+                </div>
+            </div>
+            <form th:action="@{/register}" method="post" id="registerForm">
+                <div class="row mb-3">
+                    <label for="inputUsernameRegister" class="col-sm-2 col-form-label">Username</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="username" class="form-control" id="inputUsernameRegister">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="inputPasswordRegister" class="col-sm-2 col-form-label">Password</label>
+                    <div class="col-sm-10">
+                        <input type="password" name="password" class="form-control" id="inputPasswordRegister">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="inputEmailRegister" class="col-sm-2 col-form-label">Email</label>
+                    <div class="col-sm-10">
+                        <input type="email" name="email" class="form-control" id="inputEmailRegister">
+                    </div>
+                </div>
+                <div class="row mb-3" th:insert="~{fragments/intltelinput :: intlTelInput}"></div>
+                <button type="submit" class="btn btn-primary mb-3">Register</button>
+            </form>
+        </div>
+        <div class="col-12 border rounded p-3 mb-3">
+            <div th:if="${registerSuccess}" th:switch="${registerSuccess}" class="success-message">
+                <p class="alert danger" role="alert" th:case="${registerSuccess}"></p>
+                <p class="alert success" role="alert" th:case="${logginSuccess}"></p>
+            </div>
+            <div th:if="${errorMessage}" class="error-message">
+                <p class="alert alert-danger" role="alert" th:text="${errorMessage}"></p>
+            </div>
+            <h1 th:if="${session.loggedInUser}">Xin chào, <span th:text="${session.loggedInUser.username}">User</span> 👋</h1>
+            <h1 th:unless="${session.loggedInUser}">Xin chào, <span th:text="${username}">User</span> 👋</h1>
+            <p>Đây là trang chính của ứng dụng.</p>
+            <a th:href="@{/}" class="btn btn-secondary mb-3">Quay lại Homepage</a>
+        <!--------------- QUILL EDITOR CREATE POST --------------->
+            <div id="create_post_editor">
+                <!--Title Post-->
+                <div class="mb-3">
+                    <label for="quill_title_create_post" class="form-label fs-4 text">Post Title</label>
+                    <input class="form-control" type="text" name="quill_title" id="quill_title_create_post" placeholder="Input post title here !">
+                </div>
+                <label class="form-label fs-4 text">Post Content</label>
+                <!-- Toolbar -->
+                <div id="toolbar_create_post" class="d-flex align-items-center">
+                    <span class="ql-formats">
+                        <select class="ql-font">
+                            <option selected></option>
+                            <option value="serif"></option>
+                            <option value="monospace"></option>
+                        </select>
+                        <select class="ql-size">
+                            <option value="small"></option>
+                            <option selected></option>
+                            <option value="large"></option>
+                            <option value="huge"></option>
+                        </select>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-bold"></button>
+                        <button class="ql-italic"></button>
+                        <button class="ql-underline"></button>
+                        <button class="ql-strike"></button>
+                    </span>
+                     <span class="ql-formats">
+                        <select class="ql-color"></select>
+                        <select class="ql-background"></select>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-script" value="sub"></button>
+                        <button class="ql-script" value="super"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-header" value="1"></button>
+                        <button class="ql-header" value="2"></button>
+                        <button class="ql-blockquote"></button>
+                        <button class="ql-code-block"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-list" value="ordered"></button>
+                        <button class="ql-list" value="bullet"></button>
+                        <button class="ql-indent" value="-1"></button>
+                        <button class="ql-indent" value="+1"></button>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-direction" value="rtl"></button>
+                        <select class="ql-align"></select>
+                    </span>
+                    <span class="ql-formats">
+                        <button class="ql-link"></button>
+                        <button class="ql-image"></button>
+                        <button class="ql-video"></button>
+                    </span>
+                    <span class="ql-formats d-flex align-items-center">
+                        <button class="ql-clean"></button>
+                        <button id="clearContentBtnCreatePost"><i class="fa-solid fa-trash"></i>️</button>
+                    </span>
+                </div>
+                <!-- Editor box -->
+                <div id="quill_editor_create_post"></div>
+                <form id="savePostContentFormCreate">
+                    <!-- Hidden textarea để lưu dữ liệu HTML -->
+                    <input id="hiddenTitle_createPost" type="hidden" name="title">
+                    <textarea id="hiddenContent_createPost" name="content" hidden></textarea>
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-primary mt-3 me-2">Save content</button>
+                        <button type="button" class="btn btn-primary mt-3">Use Gemini</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-12 border rounded p-3">
+            <h2 class="text-center mb-3">Show post saved</h2>
+            <div class="row">
+                <div class="col-3">Sidebar bên trái</div>
+                <div class="col-6" th:insert="~{fragments/post_viewer :: postViewer}"></div>
+                <div class="col-3">Sidebar bên phải</div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/login-form.js"></script>
+<script src="/js/gemini-box.js"></script>
+<script>
+    const quillTitleCreatePost = document.querySelector(`#quill_title_create_post`);
+    const savePostContentFormCreate = document.querySelector(`#savePostContentFormCreate`);
+    const clearContentBtnCreatePost = document.querySelector(`#clearContentBtnCreatePost`);
+
+    // Khởi tạo Quill Editor Create Post
+    const quillCreatePost = new Quill(`#quill_editor_create_post`, {
+        modules: {
+            toolbar: `#toolbar_create_post`,
+            imageResize: {
+                displaySize: true,  // Hiển thị kích thước ảnh
+                modules: ['Resize', 'DisplaySize', 'Toolbar']
+            }
+        },
+        theme: 'snow',
+        placeholder: 'New content here !',
+    });
+
+    quillCreatePost.getModule('toolbar').addHandler('image',()=>{
+        selectLocalImage();
+    });
+
+    /**
+     * Hàm này sẽ tạo một input[type=file] ảo để người dùng chọn ảnh
+     */
+    function selectLocalImage() {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+
+        // Lắng nghe sự kiện khi người dùng đã chọn file
+        input.onchange = () => {
+            const file = input.files[0];
+            if (file) {
+                // Gọi hàm upload file lên server
+                uploadImageToServer(file);
+            }
+        };
+    }
+
+    /**
+     * Hàm này sẽ gửi file ảnh lên API backend
+     * @param {File} file - File ảnh người dùng đã chọn
+     */
+    function uploadImageToServer(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/api/upload/images', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Upload failed. Server responded with ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Nhận được URL từ server, chèn ảnh vào editor
+                insertImageToEditor(data.url);
+            })
+            .catch(error => {
+                console.error('Error uploading image:', error);
+                alert('Upload ảnh thất bại!');
+            });
+    }
+
+    /**
+     * Chèn ảnh vào vị trí con trỏ hiện tại trong Quill
+     * @param {string} url - URL của ảnh đã được upload
+     */
+    function insertImageToEditor(url) {
+        // Lấy vị trí con trỏ hiện tại
+        const range = quillCreatePost.getSelection(true);
+        // Chèn thẻ <img> với src là URL nhận được
+        quillCreatePost.insertEmbed(range.index, 'image', url);
+    }
+
+    // Gắn sự kiện submit
+    savePostContentFormCreate.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitButton = e.target.querySelector('button[type="submit"]');
+        const originButtonContent = submitButton.innerHTML;
+        submitButton.innerHTML = '<i class="fa-solid fa-spinner"></i> Saving';
+        submitButton.disabled = true;
+        e.target.querySelector(`#hiddenContent_createPost`).value = quillCreatePost.root.innerHTML;
+        e.target.querySelector(`#hiddenTitle_createPost`).value = quillTitleCreatePost.value;
+
+        try {
+            const formData = new FormData(e.target);
+            const res = await fetch("/api/save-post", {method: 'post', headers: {}, body: formData});
+            if (!res.ok){
+                console.error("Failed to save"+res.statusText);
+                return;
+            }
+            // Clear nội dung Quill Editor
+            quillCreatePost.setContents([]);
+            quillTitleCreatePost.value = '';
+            // Phát sự kiện cho trung tâm event-bus
+            EventBus.emit("post:saved");
+        } catch (e) {
+            console.error(e);
+        } finally {
+            submitButton.disabled = false;
+            submitButton.innerHTML = originButtonContent;
+        }
+    });
+
+    clearContentBtnCreatePost.addEventListener('click', () => {
+        quillCreatePost.setContents([]);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ngoc.connect_gemini_api.repository.UserMapper">
+
+    <select id="findById" resultType="ngoc.connect_gemini_api.model.User">
+        SELECT * FROM users WHERE id = #{id}
+    </select>
+
+    <select id="findByUsername" resultType="ngoc.connect_gemini_api.model.User">
+        SELECT * FROM users WHERE username = #{username}
+    </select>
+
+    <select id="findByPassword" resultType="ngoc.connect_gemini_api.model.User">
+        SELECT * FROM users WHERE username = #{password}
+    </select>
+
+    <select id="findByEmail" resultType="ngoc.connect_gemini_api.model.User">
+        SELECT * FROM users WHERE email = #{email}
+    </select>
+
+    <select id="findAll" resultType="ngoc.connect_gemini_api.model.User">
+        SELECT * FROM users ORDER BY created_at DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (username, password, email, full_name, role, phone)
+        VALUES (#{username}, #{password}, #{email}, #{fullName}, #{role}, #{phone})
+    </insert>
+
+    <update id="update">
+        UPDATE users
+        SET
+            full_name = #{fullName},
+            email = #{email}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM users WHERE id = #{id}
+    </delete>
+
+</mapper>

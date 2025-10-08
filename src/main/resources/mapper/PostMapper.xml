@@ -1,0 +1,54 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ngoc.connect_gemini_api.repository.PostMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO posts (user_id, title, content<if test="status != null">, status</if>)
+        VALUES (#{userId}, #{title}, #{content}<if test="status != null">, #{status}</if>)
+    </insert>
+
+    <select id="findById" resultType="ngoc.connect_gemini_api.model.Post">
+        SELECT * FROM posts WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultType="ngoc.connect_gemini_api.model.Post">
+        SELECT * FROM posts ORDER BY created_at DESC
+    </select>
+
+    <select id="findByUserId" resultType="ngoc.connect_gemini_api.model.Post">
+        SELECT * FROM posts WHERE user_id = #{userId} ORDER BY created_at DESC
+    </select>
+
+    <select id="findPostsForUser" resultType="ngoc.connect_gemini_api.model.Post">
+        SELECT * FROM posts WHERE user_id = 0
+        <if test="userId != null">
+            OR user_id = #{userId}
+        </if>
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="findPostsWithPagination" resultType="ngoc.connect_gemini_api.model.Post">
+        SELECT * FROM posts WHERE user_id = 0
+        <if test="userId != null">
+            OR user_id = #{userId}
+        </if>
+        ORDER BY created_at DESC LIMIT #{pageable.pageSize} OFFSET #{pageable.offset}
+    </select>
+
+    <select id="countPosts" resultType="long">
+        SELECT COUNT(*) FROM posts
+    </select>
+
+    <update id="update">
+        UPDATE posts
+        SET
+            title = #{title},
+            content = #{content},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM posts WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,80 @@
+<div th:fragment="postViewer">
+    <link rel="stylesheet" href="/css/post-viewer.css">
+
+    <!-- Foreach mỗi card là 1 bài viết ở đây -->
+    <div id="post-container"></div>
+
+    <!-- Infinite scroll loader -->
+    <div id="loader" class="text-center my-3" style="display: none;">
+        <span>Đang tải thêm bài viết...</span>
+    </div>
+
+    <template id="post-card">
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Tiêu đề</h5>
+                <div class="post-content">Nội dung chính</div>
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-sm btn-primary me-2 btn-edit-post">Chỉnh sửa</button>
+                    <button class="btn btn-sm btn-danger btn-delete-post">Xóa</button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal-edit-post" tabindex="-1" aria-labelledby="modalEditPost" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEditPost">Edit Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!--------------- QUILL EDITOR UPDATE POST --------------->
+                    <div id="update_post_editor">
+                        <!--Title Post-->
+                        <div class="mb-3">
+                            <label for="quill_title_update_post" class="form-label fs-4 text">Post Title</label>
+                            <input class="form-control" type="text" name="quill_title" id="quill_title_update_post">
+                        </div>
+                        <label for="quill_editor_update_post" class="form-label fs-4 text">Post Content</label>
+                        <!-- Toolbar -->
+                        <div id="toolbar_update_post" class="d-flex align-items-center">
+                            <span class="ql-formats">
+                                <button class="ql-bold"></button>
+                                <button class="ql-italic"></button>
+                                <button class="ql-underline"></button>
+                            </span>
+                            <span class="ql-formats">
+                                <button class="ql-list" value="ordered"></button>
+                                <button class="ql-list" value="bullet"></button>
+                            </span>
+                            <span class="ql-formats">
+                                <button class="ql-link"></button>
+                                <button class="ql-image"></button>
+                            </span>
+                            <span class="ql-formats d-flex align-items-center">
+                                <button id="clearContentBtnUpdatePost"><i class="fa-solid fa-trash"></i>️</button>
+                            </span>
+                        </div>
+                        <!-- Editor box -->
+                        <div id="quill_editor_update_post"></div>
+                        <form id="savePostContentFormUpdate">
+                            <input id="hiddenId_updatePost" type="hidden" name="id" value="">
+                            <input id="hiddenTitle_updatePost" type="hidden" name="title">
+                            <textarea id="hiddenContent_updatePost" name="content" hidden></textarea>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button id="btn_update_post" type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary">Use Gemini</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/post-viewer.js"></script>
+</div>
+

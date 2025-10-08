@@ -1,0 +1,16 @@
+<div th:fragment="intlTelInput" class="row mb-3">
+    <label for="inputPhoneRegister" class="col-sm-2 col-form-label">Phone</label>
+    <div class="col-sm-10">
+        <input type="tel" class="form-control" id="inputPhoneRegister">
+        <input type="hidden" id="phone" name="phone">
+    </div>
+    <script src="/intl-tel-input-25.11.2/js/intl-tel-input.js"></script>
+    <script>
+        const intlTelInputPhone = document.querySelector("#inputPhoneRegister");
+        const itntlTel = window.intlTelInput(intlTelInputPhone, {
+            initialCountry: "vn",
+            preferredCountries: ["vn", "us", "jp"],
+            loadUtils: () => import("/intl-tel-input-25.11.2/js/utils.js"),
+        });
+    </script>
+</div>

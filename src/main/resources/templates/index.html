@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Blog</title>
+    <link rel="stylesheet" href="/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <script src="/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<div class="container d-flex flex-column justify-content-center align-items-center vh-100 text-center">
+    <h1 class="display-4">Trang chủ Smart Blog</h1>
+    <p class="lead" th:text="${welcomeMessage}"></p>
+    <a th:href="@{/homepage}" class="btn btn-primary btn-lg">Get Started</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+/*Hidden Register Box Button*/
+.btn-outline-dark:active {
+    background-color: #212529; /* đen */
+    color: #fff;              /* trắng */
+    transform: scale(0.95);   /* thu nhỏ nhẹ khi click */
+    transition: all 0.1s ease;
+}
