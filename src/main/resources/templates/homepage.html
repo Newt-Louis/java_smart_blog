@@ -17,7 +17,8 @@
     <script src="/js/quill-image-resize.js"></script>
 </head>
 <body>
-<div class="header_layout" style="height: 2vw"></div>
+<div class="header_layout" style="height: 0.5vw"></div>
+<div th:replace="~{fragments/separator :: separator('Write New Post')}"></div>
 <div class="container p-2">
     <div class="row">
         <div class="col-6" th:classappend="${session.loggedInUser == null} ? '' : 'd-none'">
@@ -181,14 +182,15 @@
                 </form>
             </div>
         </div>
-        <div class="col-12 border rounded p-3">
-            <h2 class="text-center mb-3">Show post saved</h2>
-            <div class="row">
-                <div class="col-3">Sidebar bên trái</div>
-                <div class="col-6" th:insert="~{fragments/post_viewer :: postViewer}"></div>
-                <div class="col-3">Sidebar bên phải</div>
-            </div>
-        </div>
+    </div>
+</div>
+<div th:replace="~{fragments/separator :: separator('Article Container')}"></div>
+<div class="article container">
+    <h2 class="text-center mb-3">Show post saved</h2>
+    <div class="row">
+        <div class="col-3">Sidebar bên trái</div>
+        <div class="col-6" th:insert="~{fragments/post_viewer :: postViewer}"></div>
+        <div class="col-3">Sidebar bên phải</div>
     </div>
 </div>
 <div th:replace="~{/fragments/gemini_prompt :: geminiPrompt}"></div>

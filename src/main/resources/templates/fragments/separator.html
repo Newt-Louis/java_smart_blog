@@ -1,0 +1,28 @@
+<div th:fragment="separator(label)">
+    <style>
+        .separator-text {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 3rem 0;
+        }
+        .separator-text::before,
+        .separator-text::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: rgba(0,0,0,0.08);
+        }
+        .separator-text__label {
+            margin: 0 0.9rem;
+            color: #6b7280;
+            font-size: .9rem;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+    </style>
+
+    <div class="separator separator-text">
+        <span class="separator-text__label" th:text="${label}">Default Text</span>
+    </div>
+</div>
