@@ -1,6 +1,5 @@
 package ngoc.connect_gemini_api.service;
 
-import jakarta.servlet.http.HttpSession;
 import ngoc.connect_gemini_api.dto.request.post.SavePostRequest;
 import ngoc.connect_gemini_api.dto.request.post.UpdatePostRequest;
 import ngoc.connect_gemini_api.model.Post;
@@ -15,9 +14,9 @@ import java.util.List;
 @Service
 public class PostService {
     private final PostMapper postMapper;
-    private final FileSystemStorageService storageService;
+    private final GcsStorageService storageService;
 
-    public PostService(PostMapper postMapper, FileSystemStorageService storageService) {
+    public PostService(PostMapper postMapper, GcsStorageService storageService) {
         this.postMapper = postMapper;
         this.storageService = storageService;
     }

@@ -11,11 +11,9 @@ import java.util.Optional;
 @Service
 public class AuthService {
     private final UserMapper userMapper;
-    public FileSystemStorageService storageService;
 
-    public AuthService(UserMapper userMapper, FileSystemStorageService storageService) {
+    public AuthService(UserMapper userMapper) {
         this.userMapper = userMapper;
-        this.storageService = storageService;
     }
 
     public User authenticate(LoginRequest request){
@@ -42,10 +40,6 @@ public class AuthService {
         newUser.setPassword(request.getPassword());
         newUser.setPhone(request.getPhone());
         newUser.setRole("Default");
-        User savedUser = userMapper.insert(newUser);
-        if (savedUser != null) {
-            storageService.createUserDirectory(savedUser.getId());
-        }
-        return savedUser;
+        return userMapper.insert(newUser);
     }
 }

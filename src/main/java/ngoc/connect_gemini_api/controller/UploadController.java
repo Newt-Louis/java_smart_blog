@@ -1,9 +1,9 @@
 package ngoc.connect_gemini_api.controller;
 
 import ngoc.connect_gemini_api.dto.response.ApiResponse;
-import ngoc.connect_gemini_api.service.FileSystemStorageService;
 import ngoc.connect_gemini_api.helper.InteractWithUploadedFile;
 
+import ngoc.connect_gemini_api.service.GcsStorageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +14,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class UploadController {
-    private final FileSystemStorageService storageService;
+    private final GcsStorageService storageService;
     private final InteractWithUploadedFile fileHelper;
 
-    public UploadController(FileSystemStorageService storageService,  InteractWithUploadedFile fileHelper) {
+    public UploadController(GcsStorageService storageService,  InteractWithUploadedFile fileHelper) {
         this.storageService = storageService;
         this.fileHelper = fileHelper;
     }
@@ -28,8 +28,7 @@ public class UploadController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("Not an image file!"));
         }
         try {
-            String tempFilename = storageService.storeTempFile(file);
-            String fileUrl = fileHelper.getAbsoluteUrl("/uploads/temp/" + tempFilename);
+            String fileUrl = storageService.storeTempFile(file);
             return ResponseEntity.ok(Map.of("url", fileUrl));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

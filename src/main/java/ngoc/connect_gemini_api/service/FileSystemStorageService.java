@@ -21,6 +21,11 @@ import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.UUID;
 
+/*
+ * Tạm thời không sử dụng lưu trữ cục bộ nữa do sử dụng Google Cloud Storage cho cả 2 môi trường dev + cloud.
+ * Vẫn giữ file này cho sau này có thay đổi nơi host.
+ */
+
 @Service
 public class FileSystemStorageService {
     private final Path rootLocation;
