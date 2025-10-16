@@ -37,7 +37,8 @@ public class FileSystemStorageService {
         this.uploadedFileMapper = uploadedFileMapper;
     }
 
-    @PostConstruct
+    // Annotation gọi hàm init() thực thi code khi Bean service này được khởi tạo
+//    @PostConstruct
     public void init() {
         try {
             Files.createDirectories(rootLocation);

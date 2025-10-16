@@ -1,0 +1,15 @@
+services:
+  fake-gcs-server:
+    image: fsouza/fake-gcs-server:latest
+    container_name: fake-gcs-server
+    ports:
+      - "4443:4443"
+    volumes:
+      - ./upload-gcs:/storage
+    command:
+      - "-scheme"
+      - "http"
+      - "-filesystem-root"
+      - "/storage"
+      - "-external-url"
+      - "http://localhost:4443"
