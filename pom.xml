@@ -46,6 +46,11 @@
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>${mybatis.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.webjars.npm</groupId>
+                <artifactId>has-symbols</artifactId>
+                <version>1.1.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -121,13 +126,12 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.cloud.sql</groupId>
-            <artifactId>mysql-socket-factory-connector-j-8</artifactId>
-            <version>1.12.0</version>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>spring-cloud-gcp-starter-storage</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>
-            <artifactId>spring-cloud-gcp-starter-storage</artifactId>
+            <artifactId>spring-cloud-gcp-starter-sql-mysql</artifactId>
         </dependency>
 	</dependencies>
 
