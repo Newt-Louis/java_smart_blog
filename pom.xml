@@ -189,6 +189,18 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
+                <configuration>
+                    <environmentVariables>
+                        <GOOGLE_GENAI_USE_VERTEXAI>True</GOOGLE_GENAI_USE_VERTEXAI>
+                        <GOOGLE_CLOUD_PROJECT>spring-boot-smart-blog</GOOGLE_CLOUD_PROJECT>
+                        <GOOGLE_CLOUD_LOCATION>us-central1</GOOGLE_CLOUD_LOCATION>
+                    </environmentVariables>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 </project>
